@@ -1,5 +1,7 @@
 const Recipe = require('../models/recipe')
-const {NFRError} = require('../consts/constErrors')
+const {NFRError, PermissionDeniedError} = require('../consts/constErrors')
+const User = require('../models/user')
+const Comment = require('../models/comment')
 
 const getAllRecipes = async (req, res) => {
 	try {
@@ -80,4 +82,42 @@ const getFavRecipes = async (req, res) => {
 	}
 }
 
-module.exports = {getAllRecipes, addRecipe, getOneRecipe, updateRecipe, LikeOrDislikeRecipe, getFavRecipes}
+const getUsersRecipes = async (req, res) => {
+	try {
+		res.status(200).send({recipes: req.user.recipes})
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+const deleteRecipe = async (req, res) => {
+	try {
+		console.log(req.params.recipeId)
+		const recipe = await Recipe.findById(req.params.recipeId)
+		if(!recipe) throw new Error(NFRError)
+		if(!req.user._id.equals(recipe.author.id)) throw new Error(PermissionDeniedError)
+		req.user.recipes = await req.user.recipes.filter((recipe) => !recipe._id.equals(req.params.recipeId))
+		await req.user.save()
+		const users = await User.find({})
+		await Promise.all(users.map( async (user) => {
+			user.liked = await user.liked.filter((recipeId) => recipeId !== req.params.recipeId)
+			await user.save()
+		}))
+		await Comment.deleteMany({recipe: req.params.recipeId})
+		await Recipe.deleteOne({_id: req.params.recipeId})
+		res.status(200).send('deleted')
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+module.exports = {
+	getAllRecipes,
+	addRecipe,
+	getOneRecipe,
+	updateRecipe, 
+	LikeOrDislikeRecipe,
+	getFavRecipes,
+	getUsersRecipes,
+	deleteRecipe
+}
