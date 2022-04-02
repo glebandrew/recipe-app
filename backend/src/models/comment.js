@@ -16,6 +16,9 @@ const commentSchema = new mongoose.Schema({
 	likes: {
 		type: Number,
 		default: 0
+	},
+	recipe: {
+		type: mongoose.Schema.Types.ObjectId
 	}
 })
 
