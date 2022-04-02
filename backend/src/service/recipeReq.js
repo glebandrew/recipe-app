@@ -92,7 +92,6 @@ const getUsersRecipes = async (req, res) => {
 
 const deleteRecipe = async (req, res) => {
 	try {
-		console.log(req.params.recipeId)
 		const recipe = await Recipe.findById(req.params.recipeId)
 		if(!recipe) throw new Error(NFRError)
 		if(!req.user._id.equals(recipe.author.id)) throw new Error(PermissionDeniedError)
