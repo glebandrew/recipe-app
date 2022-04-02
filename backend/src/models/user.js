@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const {NFError, PDMError} = require('../consts/constErrors')
+const {NFError} = require('../consts/constErrors')
 
 
 const userSchema = new mongoose.Schema({
@@ -28,7 +28,10 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+	recipes: [],
+	comments: [],
+	liked: []
 })
 
 userSchema.statics.findByCredentials = async (login, password) => {

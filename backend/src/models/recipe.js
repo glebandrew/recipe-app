@@ -12,6 +12,23 @@ const recipeSchema = new mongoose.Schema({
 	description: {
 		type: String,
 		reqired: true,
+	},
+	favorite: {
+		type: Boolean,
+		default: false,
+	},
+	comments: [],
+	author: {
+		name: {
+			type: String
+		},
+		id: {
+			type: mongoose.Schema.Types.ObjectId
+		}
+	},
+	likes: {
+		type: Number,
+		default: 0
 	}
 })
 

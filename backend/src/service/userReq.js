@@ -44,4 +44,12 @@ const signUpRequest = async (req, res) => {
 	}
 }
 
-module.exports = {signUpRequest, signOutRequest, signInRequest}
+const getProfile = async (req, res) => {
+	try {
+		res.status(200).send(req.user)
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile}
