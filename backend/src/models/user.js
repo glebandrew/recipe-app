@@ -29,8 +29,6 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }],
-	recipes: [],
-	comments: [],
 	liked: []
 })
 

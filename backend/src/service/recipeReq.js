@@ -21,8 +21,6 @@ const addRecipe = async (req, res) => {
 				id: req.user._id
 			}
 		})
-		await req.user.recipes.push(recipe)
-		await req.user.save()
 		await recipe.save()
 		res.status(200).send({recipe})
 	} catch (e) {
@@ -84,7 +82,8 @@ const getFavRecipes = async (req, res) => {
 
 const getUsersRecipes = async (req, res) => {
 	try {
-		res.status(200).send({recipes: req.user.recipes})
+		const recipes = await Recipe.find({'author.id': req.user._id, 'author.name': req.user.name})
+		res.send({recipes})
 	} catch (e) {
 		res.status(500).send(e.message)
 	}
@@ -95,7 +94,6 @@ const deleteRecipe = async (req, res) => {
 		const recipe = await Recipe.findById(req.params.recipeId)
 		if(!recipe) throw new Error(NFRError)
 		if(!req.user._id.equals(recipe.author.id)) throw new Error(PermissionDeniedError)
-		req.user.recipes = await req.user.recipes.filter((recipe) => !recipe._id.equals(req.params.recipeId))
 		await req.user.save()
 		const users = await User.find({})
 		await Promise.all(users.map( async (user) => {

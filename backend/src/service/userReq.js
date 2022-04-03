@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const {NFError, SWW, PDMError} = require('../consts/constErrors')
 const bcrypt = require('bcrypt')
+const Recipe = require('../models/recipe')
 
 const signInRequest = async (req, res) => {
 	try {
@@ -46,7 +47,8 @@ const signUpRequest = async (req, res) => {
 
 const getProfile = async (req, res) => {
 	try {
-		res.status(200).send(req.user)
+		const recipes = await Recipe.find({'author.id': req.user._id, 'author.name': req.user.name})
+		res.status(200).send({user: req.user, recipes})
 	} catch (e) {
 		res.status(500).send(e.message)
 	}
