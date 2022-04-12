@@ -44,7 +44,7 @@ export const AddRecipe = () => {
             title: inputTitle,
             description: inputDescr
         }))
-        setAddRecipeStatus(!addRecipeStatus)
+        setAddRecipeStatus((addRecipeStatus) => !addRecipeStatus)
     }
 
     const handleOnDash = () => {

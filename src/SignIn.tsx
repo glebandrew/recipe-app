@@ -33,14 +33,13 @@ useEffect(() => {
 
   const onSubmit = (data: SetStateAction<{}>) => {
     setDataPost(data)
-    setSignInStatus(!signInStatus)
+    setSignInStatus((signInStatus) => !signInStatus)
     redirect('/')
   }
 
   return (
     <div className="form">
       <h1>React Hook Form</h1>
-      <h2>Hello Andrey</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* <label>
           Name:

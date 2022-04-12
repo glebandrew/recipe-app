@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { Recipe } from "./Recipe"
 
 export const Dashboard = () => {
     const [recipes, setRecipes] = useState([])
@@ -8,6 +9,7 @@ export const Dashboard = () => {
     const logOut = useNavigate()
     const signIn = useNavigate()
     const addRecipe = useNavigate()
+    const redirectDetail = useNavigate()
 
 
     useEffect(() => {
@@ -42,7 +44,7 @@ export const Dashboard = () => {
 
     const handleLogOut = () => {
         logOut('/')
-        setLogOutStatus(!logOutStatus)
+        setLogOutStatus((logOutStatus) => !logOutStatus)
     }
     const handleSignIn = () => {
         signIn('signin')
@@ -50,15 +52,18 @@ export const Dashboard = () => {
     const handleAddRecipe = () => {
         addRecipe('addrecipe')
     }
+    
+    const handleDetail = (recipeId: string) => {
+        redirectDetail(`/recipe/${recipeId}`)
+    }
 
     return (
     <div>
         {
             recipes?.map((recipe: any) => {
                 return (
-                    <div key={recipe._id}>
-                        <h2>{recipe.title}</h2>
-                        <p>{recipe.description}</p>
+                    <div onClick={() => handleDetail(recipe._id)} key={recipe._id}>
+                        <Recipe title={recipe.title} descr={recipe.description}/>
                     </div>
                 )
             })
