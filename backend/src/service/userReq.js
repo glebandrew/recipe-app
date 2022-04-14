@@ -59,6 +59,7 @@ const editProfile = async (req, res) => {
 	try {
 		if(req.body.password) throw new Error('Error')
 		const user = await User.findOneAndUpdate({_id: req.user._id}, req.body, {new: true})
+		if(!req.body.name) throw new Error('Error')
 		await Recipe.updateMany({'author.id': req.user._id}, {$set: {'author.name': req.body.name}})
 		await Comment.updateMany({'author.id': req.user._id}, {$set: {'author.name': req.body.name}})
 		await user.save()
