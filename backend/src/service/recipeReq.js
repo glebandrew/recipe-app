@@ -84,7 +84,7 @@ const getFavRecipes = async (req, res) => {
 
 const getUsersRecipes = async (req, res) => {
 	try {
-		const recipes = await Recipe.find({'author.id': req.user._id, 'author.name': req.user.name})
+		const recipes = await Recipe.find({'author.id': req.user._id})
 		res.send({recipes})
 	} catch (e) {
 		res.status(500).send(e.message)

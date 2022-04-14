@@ -2,6 +2,7 @@ const User = require('../models/user')
 const {NFError, SWW, PDMError, OPWError} = require('../consts/constErrors')
 const bcrypt = require('bcrypt')
 const Recipe = require('../models/recipe')
+const Comment = require('../models/comment')
 
 const signInRequest = async (req, res) => {
 	try {
@@ -58,6 +59,8 @@ const editProfile = async (req, res) => {
 	try {
 		if(req.body.password) throw new Error('Error')
 		const user = await User.findOneAndUpdate({_id: req.user._id}, req.body, {new: true})
+		await Recipe.updateMany({'author.id': req.user._id}, {$set: {'author.name': req.body.name}})
+		await Comment.updateMany({'author.id': req.user._id}, {$set: {'author.name': req.body.name}})
 		await user.save()
 		res.status(200).send(user)
 	} catch (e) {
@@ -80,4 +83,17 @@ const editPassword = async (req ,res) => {
 	}
 }
 
-module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile, editPassword}
+const deleteUser = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id)
+		if(!user) throw new Error(NFError)
+		await Recipe.deleteMany({'author.id': req.user._id})
+		await Comment.deleteMany({'author.id': req.user._id})
+		await user.remove()
+		res.status(200).send('OK')
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile, editPassword, deleteUser}
