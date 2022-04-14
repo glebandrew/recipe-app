@@ -39,4 +39,22 @@ const deleteComment = async (req, res) => {
 	}
 }
 
-module.exports = {createComment, deleteComment }
+const LikeOrDislikeComment = async(req, res) => {
+	try {
+		const comment = await Comment.findById(req.params.commentId)
+		if(!comment) throw new Error(CNFError)
+		if(comment.likedBy.includes(req.user._id)) {
+			comment.likes -= 1
+			comment.likedBy = await comment.likedBy.filter((userId) => !req.user._id.equals(userId))
+		} else {
+			comment.likes += 1
+			await comment.likedBy.push(req.user._id)
+		}
+		await comment.save()
+		res.status(200).send(comment)
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+module.exports = { createComment, deleteComment, LikeOrDislikeComment }

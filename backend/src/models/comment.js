@@ -19,7 +19,8 @@ const commentSchema = new mongoose.Schema({
 	},
 	recipe: {
 		type: mongoose.Schema.Types.ObjectId
-	}
+	},
+	likedBy: []
 })
 
 const Comment = mongoose.model('comments', commentSchema)
