@@ -43,7 +43,7 @@ const updateRecipe = async (req, res) => {
 		const recipe = await Recipe.findById(req.params.recipeId)
 		if(!req.user._id.equals(recipe.author.id)) throw new Error(PermissionDeniedError)
 		if(!recipe) throw new Error(NFRError)
-		const newRecipe = await Recipe.findOneAndUpdate(req.params.recipeId, req.body, {new: true})
+		const newRecipe = await Recipe.findOneAndUpdate({_id: req.params.recipeId}, req.body, {new: true})
 		await newRecipe.save()
 		res.status(200).send({newRecipe})
 	} catch (e) {
