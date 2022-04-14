@@ -12,11 +12,12 @@ export const DetailRecipe:FC = () => {
     })
     const [createCommetStatus, setCreateCommetStatus] = useState(false)
     const [deleteCommetStatus, setDeleteCommetStatus] = useState(false)
-    // const [refreshRecipe, setRefreshRecipe] = useState(true)
+    const [refreshRecipe, setRefreshRecipe] = useState(true)
 
     let { recipeId } = useParams();
 
     useEffect(() => {
+        if(refreshRecipe) {
             const fetchData = async () => {
                 const config = {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -28,9 +29,11 @@ export const DetailRecipe:FC = () => {
                 .then(res => {
                     setRecipe(res.data.recipe)
                     console.log('1')
+                    setRefreshRecipe(false)
                 })
                 .catch(() => console.log("Ошибка промиса getID"))
-    },[recipeId])
+        }
+    },[recipeId, refreshRecipe])
 
 
     useEffect(() => {
@@ -45,6 +48,7 @@ export const DetailRecipe:FC = () => {
             postComment()
                 .then(res => {
                     console.log(res)
+                    setRefreshRecipe(true)
                 })
                 .catch(() => console.log("Ошибка промиса addCom"))
             setCreateCommetStatus(false)
@@ -65,6 +69,7 @@ export const DetailRecipe:FC = () => {
             deleteComment()
                 .then(res => {
                     console.log(res)
+                    setRefreshRecipe(true)
                 })
                 .catch(() => console.log("Ошибка промиса delCom"))
             setDeleteCommetStatus(false)
