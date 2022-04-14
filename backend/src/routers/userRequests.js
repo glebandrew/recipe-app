@@ -3,7 +3,7 @@ const router = express.Router()
 const auth = require('../middlewares/auth')
 const {getFavRecipes, getUsersRecipes} = require('../service/recipeReq')
 const {getProfile} = require('../service/userReq')
-const {signInRequest, signOutRequest, signUpRequest, editProfile} = require('../service/userReq')
+const {signInRequest, signOutRequest, signUpRequest, editProfile, editPassword} = require('../service/userReq')
 
 router.post('/signin', signInRequest)
 router.post('/signup', signUpRequest)
@@ -23,5 +23,6 @@ router.get('/recipes', auth, getUsersRecipes)
 //						  .	
 
 router.post('/profile/edit', auth, editProfile)
+router.post('/profile/edit/password', auth, editPassword)
 
 module.exports = router

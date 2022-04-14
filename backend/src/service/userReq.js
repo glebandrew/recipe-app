@@ -56,22 +56,28 @@ const getProfile = async (req, res) => {
 
 const editProfile = async (req, res) => {
 	try {
-		if(req.body.password && req.body.passwordAgain) {
-			const isMatch = await bcrypt.compare(req.body.oldPassword, req.user.password)
-			if(!isMatch) throw new Error(OPWError)
-			if(req.body.password !== req.body.passwordAgain) throw new Error(PDMError)
-			const password = await bcrypt.hash(req.body.password, 8)
-			const user = await User.findOneAndUpdate({_id: req.user._id}, {...req.body, password}, {new: true})
-			await user.save()
-			res.status(200).send(user)
-		}else {
-			const user = await User.findOneAndUpdate({_id: req.user._id}, req.body, {new: true})
-			await user.save()
-			res.status(200).send(user)
-		}
+		if(req.body.password) throw new Error('Error')
+		const user = await User.findOneAndUpdate({_id: req.user._id}, req.body, {new: true})
+		await user.save()
+		res.status(200).send(user)
 	} catch (e) {
 		res.status(500).send(e.message)
 	}
 }
 
-module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile}
+const editPassword = async (req ,res) => {
+	try {
+		if(!req.body.password || !req.body.passwordAgain || !req.body.oldPassword) throw new Error('Error')
+		const isMatch = await bcrypt.compare(req.body.oldPassword, req.user.password)
+		if(!isMatch) throw new Error(OPWError)
+		if(req.body.password !== req.body.passwordAgain) throw new Error(PDMError)
+		const password = await bcrypt.hash(req.body.password, 8)
+		const user = await User.findOneAndUpdate({_id: req.user._id}, {...req.body, password}, {new: true})
+		await user.save()
+		res.status(200).send(user)
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile, editPassword}
