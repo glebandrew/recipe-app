@@ -27,6 +27,7 @@ useEffect(() => {
                 localStorage.setItem("token", token)
             })
             .catch(() => console.log("Ошибка промиса signin"))
+        setSignInStatus(false)
     }
 },[dataPost, signInStatus])
 

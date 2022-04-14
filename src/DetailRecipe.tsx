@@ -6,28 +6,30 @@ import { AddComment } from './AddComment'
 export const DetailRecipe:FC = () => {
     const [recipe, setRecipe] = useState<any>({})
     const [commentText, setCommentText] = useState('')
+    const [commentId, setCommentId] = useState('')
     const [comment, setComment] = useState({
         text: ''
     })
     const [createCommetStatus, setCreateCommetStatus] = useState(false)
     const [deleteCommetStatus, setDeleteCommetStatus] = useState(false)
+    // const [refreshRecipe, setRefreshRecipe] = useState(true)
 
     let { recipeId } = useParams();
 
     useEffect(() => {
-        
-        const fetchData = async () => {
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-            };
-            const result = await axios.get(`http://localhost:3000/recipe/${recipeId}`, config)
-            return result
-        }
-        fetchData()
-            .then(res => {
-                setRecipe(res.data.recipe)
-            })
-            .catch(() => console.log("Ошибка промиса getID"))
+            const fetchData = async () => {
+                const config = {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                };
+                const result = await axios.get(`http://localhost:3000/recipe/${recipeId}`, config)
+                return result
+            }
+            fetchData()
+                .then(res => {
+                    setRecipe(res.data.recipe)
+                    console.log('1')
+                })
+                .catch(() => console.log("Ошибка промиса getID"))
     },[recipeId])
 
 
@@ -37,7 +39,6 @@ export const DetailRecipe:FC = () => {
                 const config = {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
                 };
-                console.log(commentText)
                 const result = await axios.post(`http://localhost:3000/comment/add/${recipeId}`, comment, config)
                 return result
             }
@@ -46,6 +47,8 @@ export const DetailRecipe:FC = () => {
                     console.log(res)
                 })
                 .catch(() => console.log("Ошибка промиса addCom"))
+            setCreateCommetStatus(false)
+            
         }
     },[recipeId, comment, createCommetStatus])
 
@@ -56,16 +59,18 @@ export const DetailRecipe:FC = () => {
                 const config = {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
                 };
-                const result = await axios.post(`http://localhost:3000/comment/delete/${recipeId}`, null, config)
+                const result = await axios.post(`http://localhost:3000/comment/delete/${commentId}`, null, config)
                 return result
             }
             deleteComment()
                 .then(res => {
-                    setRecipe(res.data.recipe)
+                    console.log(res)
                 })
                 .catch(() => console.log("Ошибка промиса delCom"))
+            setDeleteCommetStatus(false)
+            
         }
-    },[recipeId, deleteCommetStatus])
+    },[commentId, deleteCommetStatus])
 
 
     const handleCreateComment = (e: FormEvent<HTMLFormElement>) => {
@@ -76,8 +81,9 @@ export const DetailRecipe:FC = () => {
         }))
         setCreateCommetStatus(createCommetStatus => !createCommetStatus)
     }
-    const handleDeleteComment = () => {
-        setCreateCommetStatus(deleteCommetStatus => !deleteCommetStatus)
+    const handleDeleteComment = (id: string) => {
+        setCommentId(id)
+        setDeleteCommetStatus(deleteCommetStatus => !deleteCommetStatus)
     }
 
     return (
@@ -85,19 +91,16 @@ export const DetailRecipe:FC = () => {
             <h2>{recipe?.title}</h2>
             <p>{recipe?.description}</p>
             <div style={{color: 'white'}}>{recipe?.author?.name}</div>
-                <p style={{color: 'white'}}>{recipe?.likes}</p>
-            {
-                recipe?.comments?.map((comment: any, i: number) => {
-                    return <AddComment key={i} text={comment.text} author={comment.author?.name} like={comment.likes} />
-                })
-            }
-            
-            <form onSubmit={handleCreateComment}>
+            <p style={{color: 'white'}}>{recipe?.likes}</p>
+            <form style={{border: '1px solid white'}} onSubmit={handleCreateComment}>
                 <textarea  onChange={(e) => setCommentText(e.target.value)}/>
                 <button type={"submit"}>Add Comment</button>
-                <button type={"submit"}>Delete Comment</button>
             </form>
-            
+            {
+                recipe?.comments?.map((comment: any) => {
+                    return <AddComment deleteComment={handleDeleteComment} id={comment._id} key={comment._id} text={comment.text} author={comment.author?.name} like={comment.likes}/>
+                })
+            }
         </div> 
     )
 }

@@ -39,6 +39,7 @@ export const Dashboard = () => {
                     console.log('Vi vishli')
                 })
                 .catch(() => console.log("Ошибка промиса signout"))
+            setLogOutStatus(false)
         }
     },[logOutStatus])
 

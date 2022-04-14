@@ -35,6 +35,7 @@ export const AddRecipe = () => {
                     console.log('Рецепт добавлен')
                 })
                 .catch(() => console.log("Ошибка промиса add"))
+            setAddRecipeStatus(false)
         }
     },[addRecipeStatus, postData])
 
