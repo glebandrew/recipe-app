@@ -4,5 +4,6 @@ const PDMError = 'Password do not match'
 const NFRError = 'Recipe was not found'
 const PermissionDeniedError = 'This is not your recipe!'
 const CNFError = 'Comment was not found!'
+const OPWError = 'Old password is wrong'
 
-module.exports = {SWW, NFError, PDMError, NFRError, PermissionDeniedError, CNFError}
+module.exports = {SWW, NFError, PDMError, NFRError, PermissionDeniedError, CNFError, OPWError}

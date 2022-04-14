@@ -1,5 +1,5 @@
 const User = require('../models/user')
-const {NFError, SWW, PDMError} = require('../consts/constErrors')
+const {NFError, SWW, PDMError, OPWError} = require('../consts/constErrors')
 const bcrypt = require('bcrypt')
 const Recipe = require('../models/recipe')
 
@@ -54,4 +54,24 @@ const getProfile = async (req, res) => {
 	}
 }
 
-module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile}
+const editProfile = async (req, res) => {
+	try {
+		if(req.body.password && req.body.passwordAgain) {
+			const isMatch = await bcrypt.compare(req.body.oldPassword, req.user.password)
+			if(!isMatch) throw new Error(OPWError)
+			if(req.body.password !== req.body.passwordAgain) throw new Error(PDMError)
+			const password = await bcrypt.hash(req.body.password, 8)
+			const user = await User.findOneAndUpdate({_id: req.user._id}, {...req.body, password}, {new: true})
+			await user.save()
+			res.status(200).send(user)
+		}else {
+			const user = await User.findOneAndUpdate({_id: req.user._id}, req.body, {new: true})
+			await user.save()
+			res.status(200).send(user)
+		}
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile}
