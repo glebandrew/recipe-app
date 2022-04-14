@@ -39,6 +39,8 @@ export const AddRecipe = () => {
         }
     },[addRecipeStatus, postData])
 
+   
+
     const handleAddRecipe = () => {
         setPostData((state) => ({
             ...state,
@@ -72,9 +74,9 @@ export const AddRecipe = () => {
                         onChange={(e) => setInputDescr(e.target.value)}
                     />
                 </label>
-                <input type={"submit"} />
-                <button onClick={handleOnDash}>На главную</button>
+                <button type={"submit"}>Добавить Рецепт</button>
             </form>
+            <button onClick={handleOnDash}>На главную</button>
         </div>
     )
 }
