@@ -32,9 +32,9 @@ export const DetailRecipe:FC = () => {
     const [showEditRecipe, setShowEditRecipe] = useState(false)
 
     const [likeStatus, setLikeStatus] = useState(false)
+    const [deleteStatus, setDeleteStatus] = useState(false)
 
-    let { recipeId } = useParams();
-    console.log(recipeId)
+    let { recipeId } = useParams(); 
 
     useEffect(() => {
         if(refreshRecipe) {
@@ -107,7 +107,10 @@ export const DetailRecipe:FC = () => {
                 const config = {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
                 };
+                console.log(recipeId)
+                console.log(editData)
                 const result = await axios.post(`http://localhost:3000/recipe/edit/${recipeId}`, editData, config)
+                console.log(`http://localhost:3000/recipe/edit/${recipeId}`)
                 return result
             }
             editRecipe()
@@ -139,6 +142,26 @@ export const DetailRecipe:FC = () => {
         }
     }, [recipeId, likeStatus])
 
+    useEffect(() => {
+        if (deleteStatus) {
+            const delPost = async () => {
+                const config = {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                };
+                const result = await axios.post(`http://localhost:3000/recipe/delete/${recipeId}`, null, config)
+                return result
+            }
+            delPost()
+                .then(res => {
+                    console.log(res)
+                    console.log('vi delete рецепт')
+                    setRefreshRecipe(true)
+                })
+                .catch(() => console.log("Ошибка промиса delPost"))
+            setDeleteStatus(false)
+        }
+    }, [recipeId, deleteStatus])
+
     const handleCreateComment = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setComment((state) => ({
@@ -165,6 +188,9 @@ export const DetailRecipe:FC = () => {
     const handleLikePress = () => {
         setLikeStatus((likeStatus) => !likeStatus)
     }
+    const handleDeleteRecipe = () => {
+        setDeleteStatus((deleteStatus) => !deleteStatus)
+    }
 
     const redirectOnDashboard = () => {
         redirectMain(-1)
@@ -175,8 +201,8 @@ export const DetailRecipe:FC = () => {
             {
                 showEditRecipe ? (
                     <form onSubmit={handleEditRecipe}>
-                        <input defaultValue={recipeTitle} onChange={(e) => setEditTitle(e.target.value)}/>
-                        <input defaultValue={recipeDescr} onChange={(e) => setEditDescr(e.target.value)}/>
+                        <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)}/>
+                        <input value={editDescr} onChange={(e) => setEditDescr(e.target.value)}/>
                         <button type={'submit'}>Сохранить</button>
                     </form> 
                 ) : (
@@ -187,6 +213,7 @@ export const DetailRecipe:FC = () => {
                         <p style={{color: 'white'}}>{recipeLike}</p>
                         <button onClick={handleLikePress}>Like Recipe</button>
                         <button onClick={() => setShowEditRecipe(true)}>Изменить Рецепт</button>
+                        <button onClick={handleDeleteRecipe}>Delete Рецепт</button>
                     </div>
                 )
             }
