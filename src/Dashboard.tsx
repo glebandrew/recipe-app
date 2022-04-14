@@ -50,6 +50,9 @@ export const Dashboard = () => {
     const handleSignIn = () => {
         signIn('signin')
     }
+    const handleSignUp = () => {
+        signIn('signup')
+    }
     const handleAddRecipe = () => {
         addRecipe('addrecipe')
     }
@@ -72,6 +75,7 @@ export const Dashboard = () => {
         <button onClick={handleAddRecipe}>Add recipe</button>
         <button onClick={handleLogOut}>Log Out</button>
         <button onClick={handleSignIn}>Sign In</button>
+        <button onClick={handleSignUp}>Sign Up</button>
     </div>
     )
 }

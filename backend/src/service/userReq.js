@@ -38,7 +38,7 @@ const signUpRequest = async (req, res) => {
 			...req.body,
 			password
 		})
-		const token = user.generateAuthToken()
+		const token = await user.generateAuthToken()
 		res.cookie('auth_token', token)
 		res.status(200).send({user, token})
 	} catch (e) {
