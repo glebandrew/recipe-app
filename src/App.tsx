@@ -4,6 +4,7 @@ import { Dashboard } from "./Dashboard";
 import { AddRecipe } from "./AddRecipe";
 import {DetailRecipe} from "./DetailRecipe"
 import { SignUp } from "./SignUp";
+import { Profile } from "./Profile";
 
 export const App = () => {
 
@@ -11,6 +12,7 @@ export const App = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/recipe/:recipeId" element={<DetailRecipe />} />
+      <Route path="profile" element={<Profile />} />
       <Route path="signin" element={<SignIn />} />
       <Route path="signup" element={<SignUp />} />
       <Route path="addrecipe" element={<AddRecipe />} />

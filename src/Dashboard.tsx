@@ -9,7 +9,7 @@ export const Dashboard = () => {
     const logOut = useNavigate()
     const signIn = useNavigate()
     const addRecipe = useNavigate()
-    const redirectDetail = useNavigate()
+    const redirect = useNavigate()
 
 
     useEffect(() => {
@@ -58,7 +58,11 @@ export const Dashboard = () => {
     }
     
     const handleDetail = (recipeId: string) => {
-        redirectDetail(`/recipe/${recipeId}`)
+        redirect(`/recipe/${recipeId}`)
+    }
+
+    const handleProfile = () => {
+        redirect(`profile`)
     }
 
     return (
@@ -73,6 +77,7 @@ export const Dashboard = () => {
             })
         }
         <button onClick={handleAddRecipe}>Add recipe</button>
+        <button onClick={handleProfile}>Profile</button>
         <button onClick={handleLogOut}>Log Out</button>
         <button onClick={handleSignIn}>Sign In</button>
         <button onClick={handleSignUp}>Sign Up</button>

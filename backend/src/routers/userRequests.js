@@ -15,12 +15,6 @@ router.get('/recipes', auth, getUsersRecipes)
 //Если хочешь поменять пароль,то должны быть поля :"OldPassword", "password" , "passwordAgain"
 //Где "OldPassword" это старый пароль, "password"- новый пароль, "passwordAgain" - повторенный новый пароль
 
-//						  |
-//						  |
-//						\   /
-//						 \ / 
-//						  .	
-
 router.post('/profile/edit', auth, editProfile)
 router.post('/profile/edit/password', auth, editPassword)
 router.post('/profile/delete', auth, deleteUser)
