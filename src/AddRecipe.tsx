@@ -9,6 +9,7 @@ export const AddRecipe = () => {
     const [inputTitle, setInputTitle] = useState('')
     const [inputDescr, setInputDescr] = useState('')
     const redirect = useNavigate()
+    const redirectDetail = useNavigate()
     const [postData, setPostData] = useState({
         title: '',
         description: ''
@@ -33,6 +34,7 @@ export const AddRecipe = () => {
                 .then((res) => {
                     console.log(res)
                     console.log('Рецепт добавлен')
+                    redirectDetail(`/recipe/${res.data.recipe._id}`)
                 })
                 .catch(() => console.log("Ошибка промиса add"))
             setAddRecipeStatus(false)

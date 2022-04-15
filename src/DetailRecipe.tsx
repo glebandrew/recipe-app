@@ -107,10 +107,7 @@ export const DetailRecipe:FC = () => {
                 const config = {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
                 };
-                console.log(recipeId)
-                console.log(editData)
                 const result = await axios.post(`http://localhost:3000/recipe/edit/${recipeId}`, editData, config)
-                console.log(`http://localhost:3000/recipe/edit/${recipeId}`)
                 return result
             }
             editRecipe()
@@ -193,7 +190,7 @@ export const DetailRecipe:FC = () => {
     }
 
     const redirectOnDashboard = () => {
-        redirectMain(-1)
+        redirectMain('/')
     }
     return (
         <div>
