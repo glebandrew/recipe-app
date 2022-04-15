@@ -5,7 +5,10 @@ const Comment = require('../models/comment')
 
 const getAllRecipes = async (req, res) => {
 	try {
+		const {page = 1, limit = 5} = req.query
 		const recipes = await Recipe.find({})
+			.limit(limit)
+			.skip((page - 1) * limit)
 		res.status(200).send({recipes})
 	} catch (e) {
 		res.status(500).send(e.message)
