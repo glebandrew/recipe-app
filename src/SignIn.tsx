@@ -38,35 +38,31 @@ useEffect(() => {
     redirect('/')
   }
 
+  const handleOnSingUp = () => {
+    redirect('/signup')
+  }
+
   return (
     <div className="form">
       <h1>React Hook Form</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* <label>
-          Name:
-          <input {...register("name")} />
-        </label> */}
         <label>
           Login:
           <input {...register("login", {
-            required: true
-          })} />
+              required: true
+            })} 
+          />
         </label>
         <div style={{height: 40}}>{errors?.login && <p>Error</p>}</div>
-        {/* <label>
-          Email:
-          <input {...register("email")} />
-        </label> */}
         <label>
           Password:
-          <input {...register("password")} />
+          <input {...register("password", {
+              required: true
+            })}
+          />
         </label>
-        {/* <label>
-          Password again:
-          <input {...register("passwordAgain")} />
-        </label> */}
-        <input type={"submit"} />
-        {/* <button type={"submit"}>Войти</button> */}
+        <button type={"submit"}>Войти</button> 
+        <button onClick={handleOnSingUp}>Sign Up</button> 
       </form>
     </div>
   );
