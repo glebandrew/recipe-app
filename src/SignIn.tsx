@@ -33,14 +33,12 @@ useEffect(() => {
 
 
   const onSubmit = (data: SetStateAction<{}>) => {
-    setDataPost(data)
-    setSignInStatus((signInStatus) => !signInStatus)
-    redirect('/')
+  setDataPost(data)
+  setSignInStatus((signInStatus) => !signInStatus)
+  redirect('/')
   }
 
-  const handleOnSingUp = () => {
-    redirect('/signup')
-  }
+  const handleOnSingUp = () => redirect('/signup')
 
   return (
     <div className="form">

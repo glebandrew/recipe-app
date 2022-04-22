@@ -1,20 +1,35 @@
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect, SetStateAction, FC } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import styled from 'styled-components'
 
+interface FormInputs {
+	name: string,
+	login: string,
+	email: string,
+	password: string,
+	passwordAgain: string,
+	checkbox: boolean
+}
 
-export const SignUp = () => {
+export const SignUp:FC = () => {
     const [dataPost, setDataPost] = useState({})
     const [signUpStatus, setSignUpStatus] = useState(false)
     const redirect = useNavigate()
-    const {
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm();
 
+	const formShema = Yup.object().shape({
+		name: Yup.string().required('Введите имя').max(30, 'Слишком длинное имя'),
+		login: Yup.string().required('Введите логин').min(3, 'Логин должен иметь не менее 3 символов'),
+		email: Yup.string().required('Введите почту').email('Адрес электронной почты должен быть действительным'),
+		password: Yup.string().required('Введите пароль').min(8, 'Пароль должен иметь не менее 8 символов'),
+		passwordAgain: Yup.string().required('Введите пароль').oneOf([Yup.ref('password')], 'Пароли не совпадают'),
+		checkbox: Yup.bool().oneOf([true], 'Вы не согласились!')
+	})
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({resolver: yupResolver(formShema)})
 
 	useEffect(() => {
 		if (signUpStatus) {
@@ -34,80 +49,64 @@ export const SignUp = () => {
 		}
 	},[dataPost, signUpStatus])
 
-
 	const onSubmit = (data: SetStateAction<{}>) => {
 		setDataPost(data)
 		setSignUpStatus((signUpStatus) => !signUpStatus)
+		reset()
 		redirect('/')
 	}
-	const redirectSignIn = () => {
-		redirect('/signin')
-	}
+	const redirectSignIn = () => redirect('/signin')
 
 	return (
 		<Container>
-			<Register>
-				<Form onSubmit={handleSubmit(onSubmit)}>
-					<Field>
-						<Legend>Регистрация</Legend>
+			<Form onSubmit={handleSubmit(onSubmit)}>
+				<Field>
+					<Legend>Регистрация</Legend>
 
-						<Label>
-							Имя:
-							<Input {...register("name", {
-									required: true
-								})}  
-							/>
-						</Label>
-						<ErrorBlock>{errors?.name && <Error>Введите имя</Error>}</ErrorBlock>
+					<Label>
+						Имя:
+						<Input type={"text"} placeholder={"Ваше имя"} {...register("name")} />
+					</Label>
+					<Error>{errors.name?.message}</Error>
 
-						<Label>
-							Логин:
-							<Input {...register("login", {
-									required: true
-								})} 
-							/>
-						</Label>
-						<ErrorBlock>{errors?.login && <Error>Введите логин</Error>}</ErrorBlock>
-						
-						<Label>
-							Введите свою почту:
-							<Input {...register("email", {
-									required: true
-								})} 
-							 />
-						</Label>
-						<ErrorBlock>{errors?.email && <Error>Введите свою почту</Error>}</ErrorBlock>
+					<Label>
+						Логин:
+						<Input type={"text"} placeholder={"Логин должен иметь не менее 3 символов"} {...register("login")} />
+					</Label>
+					<Error>{errors.login?.message}</Error>
+					
+					<Label>
+						Введите почту:
+						<Input type={"email"} placeholder={"Введите адрес вашей почты"} {...register("email")} />
+					</Label>
+					<Error>{errors.email?.message}</Error>
 
-						<Label>
-							Придумайте надёжный пароль:
-							<Input {...register("password", {
-									required: true
-								})}
-							/>
-						</Label>
-						<ErrorBlock>{errors?.password && <Error>Введите пароль</Error>}</ErrorBlock>
+					<Label>
+						Придумайте надёжный пароль:
+						<Input type={"password"} placeholder={"Пароль должен иметь не менее 8 символов"} {...register("password")} />
+					</Label>
+					<Error>{errors.password?.message}</Error>
 
-						<Label>
-							Введите пароль еще раз:
-							<Input {...register("passwordAgain", {
-									required: true
-								})} 
-							/>
-						</Label>
-						<ErrorBlock>{errors?.passwordAgain && <Error>Введите пароль</Error>}</ErrorBlock>
+					<Label>
+						Введите пароль еще раз:
+						<Input type={"password"} placeholder={"Введите пароль еще раз"} {...register("passwordAgain")} />
+					</Label>
+					<Error>{errors.passwordAgain?.message}</Error>
 
-						<input type={'checkbox'}/>	
-						<ErrorBlock><Error>Checkbox</Error></ErrorBlock>	
+					<CheckboxContainer>
+						Я согласен(а) с политикой конфиденциальности
+						<Checkbox {...register("checkbox")} type="checkbox" />
+						<CheckMark></CheckMark>
+						<CheckErrorMessage>{errors.checkbox?.message}</CheckErrorMessage>
+					</CheckboxContainer>
 
-						<ButtonSubmit type={"submit"}>Зарегистрироваться</ButtonSubmit>
-						<footer>
-							Уже зарегистрированы?
-							<button onClick={redirectSignIn}>Войти</button>
-						</footer>
-					</Field>
-
-				</Form>
-			</Register>
+					<ButtonSubmit type={"submit"}>Зарегистрироваться</ButtonSubmit>
+					<Footer>
+						Уже зарегистрированы?
+						<ButtonSignIn onClick={redirectSignIn}>Войти</ButtonSignIn>
+					</Footer>
+				</Field>
+			</Form>
 			<ImgBlock>
 				<div>img</div>
 			</ImgBlock>
@@ -116,33 +115,36 @@ export const SignUp = () => {
 }
 
 const Container = styled.div`
-	height: 100vh;
-	width: 100vw;
+	padding: 40px 0 0 0;
 	display: grid;
-	grid-template-columns: 606px 834px;
+	grid-template-columns: 675px 835px;
     background: #FFFFFF;
     align-items: center;
     justify-items: center;
-`
-const Register = styled.div`
-	box-sizing: border-box;
-    padding: 0px 220px;
 `
 const ImgBlock = styled.div`
 	
 `
 const Field = styled.fieldset`
 	display: grid;
-	grid-template-rows: 80px 13px 80px 13px 80px 13px 80px 13px 80px 13px 40px 13px 65px 50px;
+	grid-template-rows: 78px 13px 78px 13px 78px 13px 78px 13px 78px 13px 60px 60px 40px;
 	align-items: center;
 	border: none;
+	margin: 0;
+    padding: 0;
 `
 const Legend = styled.legend`
+	margin: 0;
+	padding: 0;
 	font-weight: 500;
 	font-size: 25px;
     color: #344472;
 `
-const Form = styled.form``
+const Form = styled.form`
+	box-sizing: border-box;
+    padding: 0px 220px;
+	margin: 0;
+`
 const Label = styled.label`
     font-weight: 500;
     font-size: 14px;
@@ -153,7 +155,6 @@ const Error = styled.span`
 	font-size: 13px;
 	color: #FF768E;
 `
-const ErrorBlock = styled.div``
 const Input = styled.input`
 	margin-top: 5px;
 	background: #F6F6F6;
@@ -169,22 +170,108 @@ const Input = styled.input`
 const ButtonSubmit = styled.button`
 	width: 365px;
 	height: 40px;
-	background: #165ee4;
+	background: #205ccc;
 	border-radius: 4px;
 	font-weight: 500;
 	font-size: 15px;
 	line-height: 24px;
 	text-align: center;
-	color: #FFFFFF;
+	transition: 0.3s all;
+	color: #FFF;
 	border: none;
+	cursor: pointer;
 	:hover {
-		background: #FF5761;
+		background: #002569;
 	}
 	:active {
-		background: #C60E2E;
+		background: #002569;
+		color: #FFF;
+		transform: translateY(3px);
+		opacity: 0.8;
 	}
-	:disabled {
-		background: #F6F6F6;
-		color: #D1D1D1;
+`
+const Footer = styled.footer`
+	padding: 0 65px;
+	display: flex;
+	justify-content: space-between;
+`
+const ButtonSignIn = styled.button`
+	margin-top: 3px;
+	border: none;
+	cursor: pointer;
+	background: #FFFFFF;
+	text-decoration: underline;
+	transition: 0.3s all;
+	color: #205ccc;
+	:hover {
+		color: #002569;
 	}
+`
+const Checkbox = styled.input`
+	position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+`
+const CheckMark = styled.span`
+	position: absolute;
+	top: 3px;
+	left: 0;
+	height: 12px;
+	width: 12px;
+	background-color: #fff;
+	border: solid 2px #9C9C9C;
+	border-radius: 3px;
+	:after {
+		content: "";
+		position: absolute;
+	}
+`
+const CheckboxContainer = styled.label`
+	position: relative;
+	padding-left: 24px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 23px;
+	color: #707070;
+	${Checkbox}:checked ~ ${CheckMark} {
+		background-color: #E4163A;
+		border: solid 2px #E4163A;
+	}
+	${Checkbox}:disabled ~ ${CheckMark} {
+		background-color: #F6F6F6;
+		border: solid 2px #D1D1D1;
+   	}
+	${Checkbox}:disabled:checked ~ .checkmark {
+    	background-color: #D1D1D1;
+    	border: solid 2px #D1D1D1;
+   	}
+	:hover input ~ ${CheckMark} {
+		border: solid 2px #E4163A;
+	}
+	${CheckMark}:after {
+		left: 3.5px;
+		top: 0.5px;
+		width: 3px;
+		height: 7px;
+		border: solid white;
+		border-width: 0 2px 2px 0;
+		-webkit-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+`
+const CheckErrorMessage = styled.span`
+	position: absolute;
+	bottom: -20px;
+	left: 0px;
+	font-weight: 500;
+	font-size: 12px;
+	color: #FF768E;
 `
