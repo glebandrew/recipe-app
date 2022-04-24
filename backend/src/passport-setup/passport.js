@@ -19,6 +19,7 @@ passport.deserializeUser( async function (id, done) {
 passport.use(new GoogleStartegy({
 	clientID: GOOGLE_CLIENT_ID,
 	clientSecret: GOOGLE_CLIENT_SRCRET,
+	redirectURL: 'http://localhost:3001',
 	callbackURL: 'http://localhost:3000/user/google/callback',
 	passReqToCallback: true
 }, async function (request, accessToken, refreshToken, profile, done) {
