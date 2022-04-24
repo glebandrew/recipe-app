@@ -48,15 +48,14 @@ export const SignIn:FC = () => {
 		const googleLoginUrl = 'http://localhost:3000/user/google'
 		const newWindow = window.open(
 			googleLoginUrl,
-			"_blank"
+			"_blank",
+      "width: 500, height: 600"
 		)
-		let token = Cookies.get('auth_token')
-		if (token && newWindow) {
-			console.log(token)
-			localStorage.setItem("token", token)
-			newWindow.close()
-			redirect('/')
-		}
+    setTimeout(() => {
+      localStorage.setItem('token',Cookies.get('auth_token') as string)
+      redirect('/')
+      newWindow?.close()
+    },4000)
 	}
 
 

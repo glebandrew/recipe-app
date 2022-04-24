@@ -13,17 +13,16 @@ const cookieSession = require('cookie-session')
 require('./passport-setup/passport')
 
 //MAIN APP
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(cors())
 app.use(cookieSession({
 	name: 'google-session',
 	keys: ['key1', 'key2']
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(cookieParser())
+app.use(cors())
 app.use('/user', userRequests)
 app.use('/recipe', recipeRequests)
 app.use('/comment', commentRequests)
