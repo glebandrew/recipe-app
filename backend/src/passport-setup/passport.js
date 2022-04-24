@@ -23,12 +23,16 @@ passport.use(new GoogleStartegy({
 	passReqToCallback: true
 }, async function (request, accessToken, refreshToken, profile, done) {
 	const password = await bcrypt.hash(GOOGLE_USER_PASSWORD, 8)
-	const newUser = await new User({
-		name: profile.displayName,
-		login: profile.name.givenName,
-		email: profile.emails[0].value,
-		password,
-	})
-	await newUser.generateAuthToken()
-	return done(null, newUser)
+	let user = await User.findOne({googleId: profile.id})
+	if(!user) {
+		user = await new User({
+			googleId: profile.id,
+			name: profile.displayName,
+			login: profile.name.givenName,
+			email: profile.emails[0].value,
+			password,
+		})
+	}
+	await user.generateAuthToken()
+	return done(null, user)
 }))
