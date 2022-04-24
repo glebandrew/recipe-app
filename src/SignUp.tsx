@@ -18,6 +18,7 @@ interface FormInputs {
 export const SignUp:FC = () => {
     const [dataPost, setDataPost] = useState({})
     const [signUpStatus, setSignUpStatus] = useState(false)
+	const [errorMessage, showErrorMessage] = useState(false)
     const redirect = useNavigate()
 
 	const formShema = Yup.object().shape({
@@ -41,10 +42,9 @@ export const SignUp:FC = () => {
 				.then(res => {
 					console.log(res)
 					const { token } = res.data
-					console.log(token)
 					localStorage.setItem("token", token)
 				})
-				.catch(() => console.log("Ошибка промиса signUp"))
+				.catch(() => showErrorMessage(true))
 			setSignUpStatus(false)
 		}
 	},[dataPost, signUpStatus])
@@ -52,8 +52,8 @@ export const SignUp:FC = () => {
 	const onSubmit = (data: SetStateAction<{}>) => {
 		setDataPost(data)
 		setSignUpStatus((signUpStatus) => !signUpStatus)
-		reset()
 		redirect('/')
+		reset()
 	}
 	const redirectSignIn = () => redirect('/signin')
 
@@ -110,10 +110,25 @@ export const SignUp:FC = () => {
 			<ImgBlock>
 				<div>img</div>
 			</ImgBlock>
+			{
+				errorMessage ? <ErrorPromise>Что-то пошло не так...</ErrorPromise> : null
+			}
 		</Container>
 	)
 }
 
+const ErrorPromise = styled.div`
+	box-sizing: border-box;
+	padding: 8px 20px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 230px;
+	height: 40px;
+	background: #FF5761;
+	border-radius: 4px;
+	color: #FFF;
+`
 const Container = styled.div`
 	padding: 40px 0 0 0;
 	display: grid;
@@ -121,10 +136,9 @@ const Container = styled.div`
     background: #FFFFFF;
     align-items: center;
     justify-items: center;
+	position: relative;
 `
-const ImgBlock = styled.div`
-	
-`
+const ImgBlock = styled.div``
 const Field = styled.fieldset`
 	display: grid;
 	grid-template-rows: 78px 13px 78px 13px 78px 13px 78px 13px 78px 13px 60px 60px 40px;
@@ -191,6 +205,7 @@ const ButtonSubmit = styled.button`
 	}
 `
 const Footer = styled.footer`
+	box-sizing: border-box;
 	padding: 0 65px;
 	display: flex;
 	justify-content: space-between;
@@ -202,6 +217,8 @@ const ButtonSignIn = styled.button`
 	background: #FFFFFF;
 	text-decoration: underline;
 	transition: 0.3s all;
+	font-weight: 500;
+	font-size: 15px;
 	color: #205ccc;
 	:hover {
 		color: #002569;

@@ -38,6 +38,7 @@ export const Profile = () => {
     useEffect(() => {
         if (refreshUser) {
         const getProfile = async () => {
+            console.log("Profile",localStorage.getItem("token"))
             const config = {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
             };

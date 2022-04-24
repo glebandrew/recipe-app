@@ -10,8 +10,8 @@ passport.serializeUser(function (user, done) {
 	done(null, user._id)
 })
 
-passport.deserializeUser( async function (id, done) {
-	await User.findById(id, async function (err, user) {
+passport.deserializeUser( function (id, done) {
+	User.findById(id, function (err, user) {
 		done(err, user)
 	})
 })

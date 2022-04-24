@@ -1,67 +1,201 @@
-import { useState, useEffect, SetStateAction } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import "./styles.css";
+import { useState, useEffect, SetStateAction, FC } from "react"
+import { useForm } from "react-hook-form"
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import styled from "styled-components"
+import Cookies from 'js-cookie'
 
-export const SignIn = () => {
-  const [dataPost, setDataPost] = useState({})
-  const [signInStatus, setSignInStatus] = useState(false)
-  const redirect = useNavigate()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm();
+interface FormInputs {
+	login: string,
+	password: string,
+}
+
+export const SignIn:FC = () => {
+	const [dataPost, setDataPost] = useState({})
+	const [signInStatus, setSignInStatus] = useState(false)
+	const [errorMessage, showErrorMessage] = useState(false)
+	const redirect = useNavigate()
+	
+	const formShema = Yup.object().shape({
+		login: Yup.string().required('Введите логин').min(3, 'Логин должен иметь не менее 3 символов'),
+		password: Yup.string().required('Введите пароль').min(8, 'Пароль должен иметь не менее 8 символов'),
+	})
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({resolver: yupResolver(formShema)})
+
+	useEffect(() => {
+		if (signInStatus) {
+			const fetchData = async () => {
+				const result = await axios.post('http://localhost:3000/user/signin', dataPost)
+				return result
+			}
+			fetchData()
+				.then(res => {
+					const { token } = res.data
+					localStorage.setItem("token", token)
+					redirect('/')
+				})
+				.catch((error) => {
+					if (error.response) showErrorMessage(true)
+				})
+			setSignInStatus(false)
+		}
+	},[dataPost, redirect, signInStatus])
+	
+	const google = async () => {
+		const googleLoginUrl = 'http://localhost:3000/user/google'
+		const newWindow = window.open(
+			googleLoginUrl,
+			"_blank"
+		)
+		let token = Cookies.get('auth_token')
+		if (token && newWindow) {
+			console.log(token)
+			localStorage.setItem("token", token)
+			newWindow.close()
+			redirect('/')
+		}
+	}
 
 
-useEffect(() => {
-    if (signInStatus) {
-        const fetchData = async () => {
-            const result = await axios.post('http://localhost:3000/user/signin', dataPost)
-            return result
-        }
-        fetchData()
-            .then(res => {
-                const { token } = res.data
-                localStorage.setItem("token", token)
-            })
-            .catch(() => console.log("Ошибка промиса signin"))
-        setSignInStatus(false)
-    }
-},[dataPost, signInStatus])
+	const onSubmit = (data: SetStateAction<{}>) => {
+		setDataPost(data)
+		setSignInStatus((signInStatus) => !signInStatus)
+		reset()
+	}
 
+	const handleOnSingUp = () => redirect('/signup')
 
-  const onSubmit = (data: SetStateAction<{}>) => {
-  setDataPost(data)
-  setSignInStatus((signInStatus) => !signInStatus)
-  redirect('/')
-  }
+	return (
+		<Container>
+			<Form onSubmit={handleSubmit(onSubmit)}>
+				<Title>Войти</Title>
 
-  const handleOnSingUp = () => redirect('/signup')
+				<Label>
+					Логин:<br/>
+					<Input {...register("login")} />
+				</Label>
+				<Error>{errors.login?.message}</Error>
 
-  return (
-    <div className="form">
-      <h1>React Hook Form</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label>
-          Login:
-          <input {...register("login", {
-              required: true
-            })} 
-          />
-        </label>
-        <div style={{height: 40}}>{errors?.login && <p>Error</p>}</div>
-        <label>
-          Password:
-          <input {...register("password", {
-              required: true
-            })}
-          />
-        </label>
-        <button type={"submit"}>Войти</button> 
-        <button onClick={handleOnSingUp}>Sign Up</button> 
-      </form>
-    </div>
-  );
-};
+				<Label>
+					Пароль:<br/>
+					<Input {...register("password")} />
+				</Label>
+				<Error>{errors.password?.message}</Error>
+
+				<ButtonSubmit type={"submit"}>Войти</ButtonSubmit> 
+				<Footer>
+					Ещё не зарегистрированы?
+					<ButtonSignUp onClick={handleOnSingUp}>Зарегистрироваться</ButtonSignUp> 
+				</Footer>
+			</Form>
+			<ImgBlock>
+				<div>img</div>
+			</ImgBlock>
+			{
+				errorMessage ? <ErrorPromise>Такого пользователя не существует</ErrorPromise> : null
+			}
+			<button onClick={google}>Gooooogle</button>
+		</Container>
+  	)
+}
+
+const Container = styled.div`
+	padding: 100px 0 0 0;
+	display: grid;
+	grid-template-columns: 675px 835px;
+    background: #FFFFFF;
+    align-items: center;
+    justify-items: center;
+`
+const Form = styled.form`
+	display: grid;
+	grid-template-rows: 85px 78px 13px 78px 13px 60px 40px;
+	align-items: center;
+	width: 365px;
+`
+const Title = styled.h1`
+	
+`
+const Label = styled.label`
+	width: 365px;
+	font-weight: 500;
+    font-size: 14px;
+    color: #707070;
+`
+const Input = styled.input`
+	margin-top: 5px;
+	background: #F6F6F6;
+	border-radius: 4px;
+	width: 365px;
+	height: 40px;
+	box-sizing: border-box;
+    padding: 8px 12px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #303030;
+`
+const Error = styled.span`
+	font-weight: 500;
+	font-size: 13px;
+	color: #FF768E;
+`
+const ButtonSubmit = styled.button`
+	width: 365px;
+	height: 40px;
+	background: #205ccc;
+	border-radius: 4px;
+	font-weight: 500;
+	font-size: 15px;
+	line-height: 24px;
+	text-align: center;
+	transition: 0.3s all;
+	color: #FFF;
+	border: none;
+	cursor: pointer;
+	:hover {
+		background: #002569;
+	}
+	:active {
+		background: #002569;
+		color: #FFF;
+		transform: translateY(3px);
+		opacity: 0.8;
+	}
+`
+const ButtonSignUp = styled.button`
+	margin-top: 3px;
+	border: none;
+	cursor: pointer;
+	background: #FFFFFF;
+	text-decoration: underline;
+	font-weight: 500;
+	font-size: 15px;
+	transition: 0.3s all;
+	color: #205ccc;
+	:hover {
+		color: #002569;
+	}
+`
+const Footer = styled.footer`
+	box-sizing: border-box;
+	padding: 0;
+	width: 365px;
+	display: flex;
+	justify-content: space-between;
+`
+const ImgBlock = styled.div``
+const ErrorPromise = styled.div`
+	box-sizing: border-box;
+	padding: 8px 20px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 302px;
+	height: 40px;
+	background: #FF5761;
+	border-radius: 4px;
+	color: #FFF;
+`
