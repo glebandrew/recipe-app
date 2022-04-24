@@ -241,19 +241,19 @@ const CheckboxContainer = styled.label`
 	line-height: 23px;
 	color: #707070;
 	${Checkbox}:checked ~ ${CheckMark} {
-		background-color: #E4163A;
-		border: solid 2px #E4163A;
+		background-color: #002569;
+		border: solid 2px #002569;
 	}
 	${Checkbox}:disabled ~ ${CheckMark} {
 		background-color: #F6F6F6;
 		border: solid 2px #D1D1D1;
    	}
-	${Checkbox}:disabled:checked ~ .checkmark {
+	${Checkbox}:disabled:checked ~ ${Checkbox} {
     	background-color: #D1D1D1;
     	border: solid 2px #D1D1D1;
    	}
-	:hover input ~ ${CheckMark} {
-		border: solid 2px #E4163A;
+	:hover ${Checkbox} ~ ${CheckMark} {
+		border: solid 2px #002569;
 	}
 	${CheckMark}:after {
 		left: 3.5px;
