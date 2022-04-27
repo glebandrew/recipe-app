@@ -7,7 +7,7 @@ interface Iprop {
 
 export const Recipe:FC<Iprop>  = ({title, descr}) => {
     return (
-        <div style={{border: 'solid 1px white'}}>
+        <div style={{border: 'solid 4px violet'}}>
             <h2>{title}</h2>
             <p>{descr}</p>
         </div>

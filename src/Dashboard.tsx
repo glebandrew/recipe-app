@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import styled from 'styled-components'
 import { Recipe } from "./Recipe"
 
 export const Dashboard = () => {
     const [recipes, setRecipes] = useState([])
     const [logOutStatus, setLogOutStatus] = useState(false)
-    const logOut = useNavigate()
-    const signIn = useNavigate()
-    const addRecipe = useNavigate()
     const redirect = useNavigate()
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,43 +41,36 @@ export const Dashboard = () => {
     },[logOutStatus])
 
     const handleLogOut = () => {
-        logOut('/')
+        redirect('/')
         setLogOutStatus((logOutStatus) => !logOutStatus)
     }
-    const handleSignIn = () => {
-        signIn('signin')
-    }
-    const handleSignUp = () => {
-        signIn('signup')
-    }
-    const handleAddRecipe = () => {
-        addRecipe('addrecipe')
-    }
-    
-    const handleDetail = (recipeId: string) => {
-        redirect(`/recipe/${recipeId}`)
-    }
-
-    const handleProfile = () => {
-        redirect(`profile`)
-    }
+    const handleSignIn = () => redirect('/signin')
+    const handleSignUp = () => redirect('/signup')
+    const handleAddRecipe = () => redirect('addrecipe')
+    const handleDetail = (recipeId: string) => redirect(`recipe/${recipeId}`)
+    const handleProfile = () => redirect(`profile`)
 
     return (
-    <div>
-        {
-            recipes?.map((recipe: any) => {
-                return (
-                    <div onClick={() => handleDetail(recipe._id)} key={recipe._id}>
-                        <Recipe title={recipe.title} descr={recipe.description}/>
-                    </div>
-                )
-            })
-        }
-        <button onClick={handleAddRecipe}>Add recipe</button>
-        <button onClick={handleProfile}>Profile</button>
-        <button onClick={handleLogOut}>Log Out</button>
-        <button onClick={handleSignIn}>Sign In</button>
-        <button onClick={handleSignUp}>Sign Up</button>
-    </div>
+        <Section>
+            {
+                recipes?.map((recipe: any) => {
+                    return (
+                        <div onClick={() => handleDetail(recipe._id)} key={recipe._id}>
+                            <Recipe title={recipe.title} descr={recipe.description}/>
+                        </div>
+                    )
+                })
+            }
+            <button onClick={handleAddRecipe}>Add recipe</button>
+            <button onClick={handleProfile}>Profile</button>
+            <button onClick={handleLogOut}>Log Out</button>
+            <button onClick={handleSignIn}>Sign In</button>
+            <button onClick={handleSignUp}>Sign Up</button>
+        </Section>
     )
 }
+
+const Section = styled.section`
+    border: 4px dotted black;
+`
+

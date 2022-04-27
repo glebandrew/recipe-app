@@ -44,8 +44,9 @@ export const SignUp:FC = () => {
 					const { token } = res.data
 					localStorage.setItem("token", token)
 				})
-				.catch(() => showErrorMessage(true))
-			setSignUpStatus(false)
+				.catch((error) => {
+					if (error.response) showErrorMessage(true)
+				})
 		}
 	},[dataPost, signUpStatus])
 

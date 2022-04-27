@@ -44,20 +44,15 @@ export const SignIn:FC = () => {
 		}
 	},[dataPost, redirect, signInStatus])
 	
-	const google = async () => {
+	const googleAuth = async () => {
 		const googleLoginUrl = 'http://localhost:3000/user/google'
-		const newWindow = window.open(
-			googleLoginUrl,
-			"_blank",
-      "width: 500, height: 600"
-		)
-    setTimeout(() => {
-      localStorage.setItem('token',Cookies.get('auth_token') as string)
-      redirect('/')
-      newWindow?.close()
-    },4000)
+		const newWindow = window.open(googleLoginUrl,"_blank","width: 600, height: 700")
+		setTimeout(() => {
+			localStorage.setItem('token',Cookies.get('auth_token') as string)
+			redirect('/')
+			newWindow?.close()
+		}, 4000)
 	}
-
 
 	const onSubmit = (data: SetStateAction<{}>) => {
 		setDataPost(data)
@@ -96,7 +91,7 @@ export const SignIn:FC = () => {
 			{
 				errorMessage ? <ErrorPromise>Такого пользователя не существует</ErrorPromise> : null
 			}
-			<button onClick={google}>Gooooogle</button>
+			<button onClick={googleAuth}>Gooooogle</button>
 		</Container>
   	)
 }
@@ -116,7 +111,11 @@ const Form = styled.form`
 	width: 365px;
 `
 const Title = styled.h1`
-	
+	margin: 0;
+	padding: 0;
+	font-weight: 500;
+	font-size: 25px;
+    color: #344472;
 `
 const Label = styled.label`
 	width: 365px;
