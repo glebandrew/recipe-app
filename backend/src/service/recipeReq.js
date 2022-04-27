@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe')
-const {NFRError, PermissionDeniedError} = require('../consts/constErrors')
+const {NFRError, PermissionDeniedError, PhotoIsMissing} = require('../consts/constErrors')
+const sharp = require('sharp')
 const User = require('../models/user')
 const Comment = require('../models/comment')
 
@@ -113,6 +114,22 @@ const deleteRecipe = async (req, res) => {
 	}
 }
 
+const addPhotoForRecipe = async (req, res) => {
+	try {
+		const recipe = await Recipe.findById(req.params.recipeId)
+		if(!recipe) throw new Error(NFRError)
+		if(!req.files) throw new Error(PhotoIsMissing)
+		await Promise.all(req.files.map(async (photo) => {
+			const buffer = await sharp((photo).buffer).resize({width: 250, height: 250}).png().toBuffer()
+			recipe.photos = await recipe.photos.concat({photo: buffer})
+		}))
+		await recipe.save()
+		res.status(201).send({recipe})
+	} catch (e) {
+		res.status(400).send(e.message)
+	}
+}
+
 module.exports = {
 	getAllRecipes,
 	addRecipe,
@@ -121,5 +138,6 @@ module.exports = {
 	LikeOrDislikeRecipe,
 	getFavRecipes,
 	getUsersRecipes,
-	deleteRecipe
+	deleteRecipe,
+	addPhotoForRecipe
 }

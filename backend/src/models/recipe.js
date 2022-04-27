@@ -29,7 +29,12 @@ const recipeSchema = new mongoose.Schema({
 	likes: {
 		type: Number,
 		default: 0
-	}
+	},
+	photos: [{
+		photo: {
+			type: Buffer,
+		}
+	}]
 })
 
 const Recipe = mongoose.model('recipes', recipeSchema)
