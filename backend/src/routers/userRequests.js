@@ -2,8 +2,9 @@ const express = require('express')
 const passport = require('passport')
 const router = express.Router()
 const auth = require('../middlewares/auth')
+const {upload} = require('../middlewares/upload')
 const {getFavRecipes, getUsersRecipes} = require('../service/recipeReq')
-const {signInRequest, signOutRequest, signUpRequest, editProfile, editPassword, getProfile, deleteUser} = require('../service/userReq')
+const {signInRequest, signOutRequest, signUpRequest, editProfile, editPassword, getProfile, deleteUser, uploadAvatar} = require('../service/userReq')
 
 router.post('/signin', signInRequest)
 router.post('/signup', signUpRequest)
@@ -25,5 +26,9 @@ router.get('/recipes', auth, getUsersRecipes)
 router.post('/profile/edit', auth, editProfile)
 router.post('/profile/edit/password', auth, editPassword)
 router.post('/profile/delete', auth, deleteUser)
+router.post('/avatar', auth, upload.single('avatar'), uploadAvatar,
+(error, req, res, next) => {
+    res.status(400).send({error: error.message})
+})
 
 module.exports = router

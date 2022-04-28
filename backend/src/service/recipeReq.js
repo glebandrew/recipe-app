@@ -124,7 +124,7 @@ const addPhotoForRecipe = async (req, res) => {
 			recipe.photos = await recipe.photos.concat({photo: buffer})
 		}))
 		await recipe.save()
-		res.status(201).send({recipe})
+		res.status(201).send()
 	} catch (e) {
 		res.status(400).send(e.message)
 	}

@@ -1,6 +1,7 @@
 const User = require('../models/user')
-const {NFError, SWW, PDMError, OPWError} = require('../consts/constErrors')
+const {NFError, SWW, PDMError, OPWError, PhotoIsMissing, EDIT_PASSWORD_PERMISSION_DENIED} = require('../consts/constErrors')
 const bcrypt = require('bcrypt')
+const sharp = require('sharp')
 const Recipe = require('../models/recipe')
 const Comment = require('../models/comment')
 
@@ -71,6 +72,7 @@ const editProfile = async (req, res) => {
 
 const editPassword = async (req ,res) => {
 	try {
+		if (req.user.googleId) throw new Error(EDIT_PASSWORD_PERMISSION_DENIED)
 		if(!req.body.password || !req.body.passwordAgain || !req.body.oldPassword) throw new Error('Error')
 		const isMatch = await bcrypt.compare(req.body.oldPassword, req.user.password)
 		if(!isMatch) throw new Error(OPWError)
@@ -97,4 +99,16 @@ const deleteUser = async (req, res) => {
 	}
 }
 
-module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile, editPassword, deleteUser}
+const uploadAvatar = async (req, res) => {
+	try {
+		if(!req.file) throw new Error(PhotoIsMissing)
+		const buffer = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
+		req.user.avatar = await req.user.avatar.concat({photo: buffer})
+		await req.user.save()
+		res.status(200).send({user: req.user})
+	} catch (e) {
+		res.status(500).send(e.message)
+	}
+}
+
+module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile, editPassword, deleteUser, uploadAvatar}

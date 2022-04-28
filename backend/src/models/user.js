@@ -26,9 +26,11 @@ const userSchema = new mongoose.Schema({
 	googleId: {
 		type: String,
 	},
-	avatar: {
-		type: Buffer
-	},
+	avatar: [{
+		photo: {
+			type: Buffer
+		}
+	}],
 	tokens:[{
         token:{
             type: String,
