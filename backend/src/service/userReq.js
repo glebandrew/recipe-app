@@ -102,8 +102,7 @@ const deleteUser = async (req, res) => {
 const uploadAvatar = async (req, res) => {
 	try {
 		if(!req.file) throw new Error(PhotoIsMissing)
-		const buffer = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
-		req.user.avatar = await req.user.avatar.concat({photo: buffer})
+		req.user.avatar = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
 		await req.user.save()
 		res.status(200).send({user: req.user})
 	} catch (e) {
