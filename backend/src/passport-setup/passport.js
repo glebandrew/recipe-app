@@ -33,7 +33,6 @@ passport.use(new GoogleStartegy({
 			email: profile.emails[0].value,
 			password,
 		})
-		console.log(user.avatar)
 	}
 	await user.generateAuthToken()
 	return done(null, user)
