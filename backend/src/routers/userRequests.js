@@ -13,6 +13,7 @@ router.get('/google', passport.authenticate('google', {scope: ['profile', 'email
 router.get('/google/callback', passport.authenticate('google', {failureRedirect: '/user/signup'}),
 	function (req, res) {
 		res.cookie('auth_token', req.user.tokens[req.user.tokens.length - 1].token)
+		res.cookie('name', req.user.name)
 		res.send()
 	})
 router.get('/profile', auth, getProfile)

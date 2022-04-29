@@ -3,8 +3,13 @@ import styled from 'styled-components'
 import { useNavigate } from "react-router-dom"
 import { ReactComponent as SVGProfile } from './assets/icons/profile.svg'
 
-export const Header:FC = () => {
+interface Iprop {
+    authUser: boolean
+}
+
+export const Header:FC<Iprop> = ({authUser}) => {
     const redirect = useNavigate()
+
     const handleSignIn = () => redirect('/signin')
     const handleSignUp = () => redirect('/signup')
     const handleProfile = () => redirect(`profile`)
@@ -12,12 +17,21 @@ export const Header:FC = () => {
         <HeaderApp>
             <Logo>Recipe</Logo>
             <RightBlock>
-                <Button onClick={handleSignIn}>Sign In</Button>
-                <Button onClick={handleSignUp}>Sign Up</Button>
-            </RightBlock>
-            <RightBlock>
-                <UserProfile onClick={handleProfile}>John Smith</UserProfile>
-                <SVGProfile />
+                {
+                    authUser ? (
+                        <>
+                            <UserProfile onClick={handleProfile}>{localStorage.getItem('userName')}</UserProfile>
+                            <SVGProfile />
+                        </>
+                        
+                    ) : (
+                        <>
+                            <Button onClick={handleSignIn}>Sign In</Button>
+                            <Button onClick={handleSignUp}>Sign Up</Button>
+                        </>
+                    )
+                }
+                
             </RightBlock>
         </HeaderApp>
     )

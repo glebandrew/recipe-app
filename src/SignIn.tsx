@@ -33,9 +33,11 @@ export const SignIn:FC = () => {
 			}
 			fetchData()
 				.then(res => {
-					const { token } = res.data
+					const { token, user } = res.data
 					localStorage.setItem("token", token)
+					localStorage.setItem("userName", user.name)
 					redirect('/')
+					console.log("Vi zashli SignIn")
 				})
 				.catch((error) => {
 					if (error.response) showErrorMessage(true)
@@ -49,7 +51,9 @@ export const SignIn:FC = () => {
 		const newWindow = window.open(googleLoginUrl,"_blank","width: 600, height: 700")
 		setTimeout(() => {
 			localStorage.setItem('token',Cookies.get('auth_token') as string)
+			localStorage.setItem('userName', Cookies.get('name') as string)
 			redirect('/')
+			console.log("Vi zashli SignIn Google")
 			newWindow?.close()
 		}, 4000)
 	}

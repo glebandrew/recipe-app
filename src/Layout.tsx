@@ -1,15 +1,56 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import styled from 'styled-components'
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 
 export const Layout:FC = () => {
+    const [logOutStatus, setLogOutStatus] = useState(false)
+    const redirect = useNavigate()
+    const [authStatus, setAuthStatus] = useState(false)
+    const [user, setUser] = useState<string>()
+
+    useEffect(() => {
+        const userName = localStorage.getItem('userName')
+        if (userName)  {
+            setUser(userName)
+            setAuthStatus(true)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (logOutStatus) {
+            const logOutData = async () => {
+                const config = {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                };
+                const result = await axios.post('http://localhost:3000/user/signout', null, config)
+                return result
+            }
+            logOutData()
+                .then(() => {
+                    localStorage.clear()
+                    console.log('Vi vishli')
+                })
+                .catch(() => console.log("Ошибка промиса signout"))
+            setLogOutStatus(false)
+        }
+    },[logOutStatus])
+
+    const handleLogOut = (status: boolean) => {
+        redirect('/')
+        setLogOutStatus((logOutStatus) => !logOutStatus)
+        setAuthStatus(status)
+    }
+
+
     return (
         <Container>
-            <Header />
+            <Header authUser={authStatus}/>
             <Wrapper>
-                <Sidebar />
+                <Sidebar authUser={authStatus} logOut={handleLogOut} />
                 <Main>
                     <Outlet />
                 </Main>

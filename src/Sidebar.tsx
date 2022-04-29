@@ -1,36 +1,15 @@
-import { FC, useEffect, useState } from 'react'
+import { FC} from 'react'
 import styled from 'styled-components'
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
+// import { useNavigate } from "react-router-dom"
+// import axios from "axios"
 import { ReactComponent as SVGLogOut } from './assets/icons/log_out.svg'
 
-export const Sidebar:FC = () => {
-    const [logOutStatus, setLogOutStatus] = useState(false)
-    const redirect = useNavigate()
+interface Iprop {
+    authUser: boolean,
+    logOut: (status: boolean) => void
+}
 
-    useEffect(() => {
-        if (logOutStatus) {
-            const logOutData = async () => {
-                const config = {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                };
-                const result = await axios.post('http://localhost:3000/user/signout', null, config)
-                return result
-            }
-            logOutData()
-                .then(() => {
-                    localStorage.clear()
-                    console.log('Vi vishli')
-                })
-                .catch(() => console.log("Ошибка промиса signout"))
-            setLogOutStatus(false)
-        }
-    },[logOutStatus])
-
-    const handleLogOut = () => {
-        redirect('/')
-        setLogOutStatus((logOutStatus) => !logOutStatus)
-    }
+export const Sidebar:FC<Iprop> = ({authUser, logOut}) => {
 
     return (
         <Aside>
@@ -39,11 +18,18 @@ export const Sidebar:FC = () => {
                     <ListItem>Рецепты</ListItem>
                 </ListGroup>
             </Menu>
-            <Footer>
-                <Button onClick={handleLogOut}>
-                    Log Out
-                    <SVGLogOut />
-                </Button>
+            <Footer> 
+                {
+                    authUser ? (
+                        <> 
+                            <Button onClick={() => logOut(false)}>
+                                Log Out
+                                <SVGLogOut />
+                            </Button>
+                        </>
+                    ) : null
+                }
+                
             </Footer>
         </Aside>
     )

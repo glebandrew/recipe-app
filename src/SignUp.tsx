@@ -5,6 +5,7 @@ import axios from "axios";
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import styled from 'styled-components'
+import Cookies from 'js-cookie'
 
 interface FormInputs {
 	name: string,
@@ -40,20 +41,34 @@ export const SignUp:FC = () => {
 			}
 			fetchData()
 				.then(res => {
-					console.log(res)
-					const { token } = res.data
+					const { token, user } = res.data
+					console.log(user)
 					localStorage.setItem("token", token)
+					localStorage.setItem("userName", user.name)
+					redirect('/')
+					console.log("Vi zashli SignUp")
 				})
 				.catch((error) => {
 					if (error.response) showErrorMessage(true)
 				})
 		}
-	},[dataPost, signUpStatus])
+	},[dataPost, redirect, signUpStatus])
+
+	const googleAuth = async () => {
+		const googleLoginUrl = 'http://localhost:3000/user/google'
+		const newWindow = window.open(googleLoginUrl,"_blank","width: 600, height: 700")
+		setTimeout(() => {
+			localStorage.setItem('token', Cookies.get('auth_token') as string)
+			localStorage.setItem('userName', Cookies.get('name') as string)
+			redirect('/')
+			console.log("Vi zashli SignUp Google")
+			newWindow?.close()
+		}, 4000)
+	}
 
 	const onSubmit = (data: SetStateAction<{}>) => {
 		setDataPost(data)
 		setSignUpStatus((signUpStatus) => !signUpStatus)
-		redirect('/')
 		reset()
 	}
 	const redirectSignIn = () => redirect('/signin')
@@ -114,6 +129,7 @@ export const SignUp:FC = () => {
 			{
 				errorMessage ? <ErrorPromise>Что-то пошло не так...</ErrorPromise> : null
 			}
+			<button onClick={googleAuth}>Gooooogle</button>
 		</Container>
 	)
 }
