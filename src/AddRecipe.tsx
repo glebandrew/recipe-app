@@ -1,10 +1,10 @@
-import {useEffect, useState} from 'react'
+import {FC, useEffect, useState} from 'react'
 import { useForm } from "react-hook-form";
 import axios from 'axios'
-import { useNavigate } from "react-router-dom";
-import "./styles.css";
+import { useNavigate } from "react-router-dom"
+import "./styles.css"
 
-export const AddRecipe = () => {
+export const AddRecipe:FC = () => {
     const [addRecipeStatus, setAddRecipeStatus] = useState(false)
     const [inputTitle, setInputTitle] = useState('')
     const [inputDescr, setInputDescr] = useState('')
@@ -39,7 +39,7 @@ export const AddRecipe = () => {
                 .catch(() => console.log("Ошибка промиса add"))
             setAddRecipeStatus(false)
         }
-    },[addRecipeStatus, postData])
+    },[addRecipeStatus, postData, redirectDetail])
 
    
 

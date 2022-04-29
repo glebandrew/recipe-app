@@ -1,8 +1,8 @@
-import { useEffect, FormEvent, useState } from 'react'
+import { useEffect, FormEvent, useState, FC } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-export const Profile = () => {
+export const Profile:FC = () => {
     const redirectMain = useNavigate()
     
     const [nameUser, setNameUser] = useState('')

@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, FC } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import styled from 'styled-components'
 import { Recipe } from "./Recipe"
 
-export const Dashboard = () => {
+export const Dashboard:FC = () => {
     const [recipes, setRecipes] = useState([])
-    const [logOutStatus, setLogOutStatus] = useState(false)
     const redirect = useNavigate()
 
     useEffect(() => {
@@ -21,56 +20,51 @@ export const Dashboard = () => {
             .catch(() => console.log("Ошибка промиса dashboard"))
     },[])
 
-    useEffect(() => {
-        if (logOutStatus) {
-            const logOutData = async () => {
-                const config = {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                };
-                const result = await axios.post('http://localhost:3000/user/signout', null, config)
-                return result
-            }
-            logOutData()
-                .then(() => {
-                    localStorage.clear()
-                    console.log('Vi vishli')
-                })
-                .catch(() => console.log("Ошибка промиса signout"))
-            setLogOutStatus(false)
-        }
-    },[logOutStatus])
-
-    const handleLogOut = () => {
-        redirect('/')
-        setLogOutStatus((logOutStatus) => !logOutStatus)
-    }
-    const handleSignIn = () => redirect('/signin')
-    const handleSignUp = () => redirect('/signup')
     const handleAddRecipe = () => redirect('addrecipe')
-    const handleDetail = (recipeId: string) => redirect(`recipe/${recipeId}`)
-    const handleProfile = () => redirect(`profile`)
+    const handleDetailCard = (recipeId: string) => redirect(`recipe/${recipeId}`)
 
     return (
         <Section>
-            {
-                recipes?.map((recipe: any) => {
-                    return (
-                        <div onClick={() => handleDetail(recipe._id)} key={recipe._id}>
-                            <Recipe title={recipe.title} descr={recipe.description}/>
-                        </div>
-                    )
-                })
-            }
-            <button onClick={handleAddRecipe}>Add recipe</button>
-            <button onClick={handleProfile}>Profile</button>
-            <button onClick={handleLogOut}>Log Out</button>
-            <button onClick={handleSignIn}>Sign In</button>
-            <button onClick={handleSignUp}>Sign Up</button>
+            <Header>
+                <input />
+                <button onClick={handleAddRecipe}>Add recipe</button>    
+            </Header>
+            <ListRecipe>
+                {
+                    recipes?.map((recipe: any) => {
+                        return <Recipe  handleDetail={handleDetailCard} key={recipe._id} id={recipe._id} title={recipe.title} descr={recipe.description}/>
+                    })
+                }
+            </ListRecipe>
+            <Footer>
+                <p>Paginate</p>
+                <p>sekect</p>
+            </Footer>
         </Section>
     )
 }
 
 const Section = styled.section`
-    border: 4px dotted black;
+    width: 1300px;
+    height: 992px;
+    padding: 32px 80px;
+    box-sizing: border-box;
 `
-
+const Header = styled.header`
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+`
+const ListRecipe = styled.div`
+    width: 100%;
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 364px);
+    grid-template-rows: repeat(2, 380px);
+    gap: 24px;
+`
+const Footer = styled.footer`
+   display: flex;
+   width: 100%;
+   justify-content: space-between;
+`
