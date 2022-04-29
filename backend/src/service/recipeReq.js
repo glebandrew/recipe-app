@@ -15,10 +15,10 @@ const getAllRecipes = async (req, res) => {
 		}
 		const {page = 1, limit = 6} = req.query
 		if(!req.query.select) {
-			const recipes = findRecipes()
+			const recipes = await findRecipes()
 			res.status(200).send({recipes})
 		} else {
-			const recipes = findRecipes({title: {$regex: `/^${req.query.select}/i`}})
+			const recipes = await findRecipes({title: {$regex: `/^${req.query.select}/i`}})
 			res.status(200).send({recipes})
 		}
 	} catch (e) {
