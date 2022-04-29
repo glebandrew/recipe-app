@@ -10,7 +10,7 @@ export const Dashboard:FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.get('http://localhost:3000?select=ch')
+            const result = await axios.get('http://localhost:3000')
             return result
         }
         fetchData()

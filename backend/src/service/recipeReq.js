@@ -16,13 +16,9 @@ const getAllRecipes = async (req, res) => {
 		const {page = 1, limit = 6} = req.query
 		if(!req.query.select) {
 			const recipes = await findRecipes()
-			console.log(req.query)
 			res.status(200).send({recipes})
 		} else {
-			const regexExp = new RegExp('^' + req.query.select, 'i')
-			console.log(regexExp)
-			const recipes = await findRecipes({title: {$regex: regexExp}})
-			console.log(req.query)
+			const recipes = await findRecipes({title: {$regex: new RegExp('^' + req.query.select, 'i')}})
 			res.status(200).send({recipes})
 		}
 	} catch (e) {
