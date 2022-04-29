@@ -6,11 +6,21 @@ const Comment = require('../models/comment')
 
 const getAllRecipes = async (req, res) => {
 	try {
+		const findRecipes = async function (searchParam = {}) {
+			const recipes = await Recipe.find(searchParam)
+				.sort({likes: -1})
+				.limit(limit)
+				.skip((page - 1) * limit)
+			return recipes
+		}
 		const {page = 1, limit = 6} = req.query
-		const recipes = await Recipe.find({})
-			.limit(limit)
-			.skip((page - 1) * limit)
-		res.status(200).send({recipes})
+		if(!req.query.select) {
+			const recipes = findRecipes()
+			res.status(200).send({recipes})
+		} else {
+			const recipes = findRecipes({title: {$regex: `/^${req.query.select}/i`}})
+			res.status(200).send({recipes})
+		}
 	} catch (e) {
 		res.status(500).send(e.message)
 	}
