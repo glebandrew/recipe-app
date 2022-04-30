@@ -14,6 +14,7 @@ router.get('/google/callback', passport.authenticate('google', {failureRedirect:
 	function (req, res) {
 		res.cookie('auth_token', req.user.tokens[req.user.tokens.length - 1].token)
 		res.cookie('name', req.user.name)
+		res.cookie('avatar', req.user.avatar)
 		res.send()
 	})
 router.get('/profile', auth, getProfile)

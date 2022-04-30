@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const {NFError} = require('../consts/constErrors')
+const Schema = require('mongoose').Schema
 
 
 const userSchema = new mongoose.Schema({
@@ -27,7 +28,7 @@ const userSchema = new mongoose.Schema({
 		type: String,
 	},
 	avatar: {
-		tyepe: Buffer
+		type: Schema.Types.Mixed
 	},
 	tokens:[{
         token:{

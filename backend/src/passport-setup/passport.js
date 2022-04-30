@@ -31,6 +31,7 @@ passport.use(new GoogleStartegy({
 			name: profile.displayName,
 			login: profile.name.givenName,
 			email: profile.emails[0].value,
+			avatar: profile.picture,
 			password,
 		})
 	}
