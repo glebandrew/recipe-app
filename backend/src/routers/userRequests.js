@@ -10,7 +10,10 @@ router.post('/signin', signInRequest)
 router.post('/signup', signUpRequest)
 router.post('/signout', auth, signOutRequest)
 router.get('/google', passport.authenticate('google', {scope: ['profile', 'email']}))
-router.get('/google/callback', passport.authenticate('google', {failureRedirect: '/user/signup'}),
+router.get('/google/callback', passport.authenticate('google', {
+	failureRedirect: '/user/signup',
+	successRedirect: 'http://localhost:3001'
+}),
 	function (req, res) {
 		res.cookie('auth_token', req.user.tokens[req.user.tokens.length - 1].token)
 		res.cookie('name', req.user.name)
