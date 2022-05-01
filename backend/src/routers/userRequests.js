@@ -4,7 +4,7 @@ const router = express.Router()
 const auth = require('../middlewares/auth')
 const {upload} = require('../middlewares/upload')
 const {getFavRecipes, getUsersRecipes} = require('../service/recipeReq')
-const {signInRequest, signOutRequest, signUpRequest, editProfile, editPassword, getProfile, deleteUser, uploadAvatar} = require('../service/userReq')
+const {signInRequest, signOutRequest, signUpRequest, editProfile, editPassword, getProfile, deleteUser, uploadAvatar, googleLoginSuccess} = require('../service/userReq')
 
 router.post('/signin', signInRequest)
 router.post('/signup', signUpRequest)
@@ -13,16 +13,11 @@ router.get('/google', passport.authenticate('google', {scope: ['profile', 'email
 router.get('/google/callback', passport.authenticate('google', {
 	failureRedirect: '/user/signup',
 	successRedirect: 'http://localhost:3001'
-}),
-	function (req, res) {
-		res.cookie('auth_token', req.user.tokens[req.user.tokens.length - 1].token)
-		res.cookie('name', req.user.name)
-		res.cookie('avatar', req.user.avatar)
-		res.send()
-	})
+}))
 router.get('/profile', auth, getProfile)
 router.get('/favorite/recipe', auth, getFavRecipes)
 router.get('/recipes', auth, getUsersRecipes)
+router.get('/login/success', googleLoginSuccess)
 
 //Если хочешь поменять просто тело,то достаточно передать только имя и логин новые,или просто имя
 //Если хочешь поменять пароль,то должны быть поля :"OldPassword", "password" , "passwordAgain"

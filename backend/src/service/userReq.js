@@ -110,4 +110,32 @@ const uploadAvatar = async (req, res) => {
 	}
 }
 
-module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile, editPassword, deleteUser, uploadAvatar}
+const googleLoginSuccess = async (req, res) => {
+	try {
+		if(!req.user) throw new Error(NFError)
+		console.log('success')
+		res.status(200).send({user: req.user, token: req.user.tokens[req.user.tokens.length - 1].token})
+	} catch (e) {
+		console.log('error')
+		res.status(500).send(e.message)
+	}
+}
+
+// useEffect(() => {
+// 	const fetchData = async () => {
+// 		const googleUser = await axios.get('http://localhost:3000/user/login/success')
+// 		return googleUser
+// 	}
+// 	fetchData()
+// 		.then((googleUser) => {
+// 			//@ts-ignore
+// 			localStorage.setItem('token', googleUser.token)
+// 			//@ts-ignore
+// 			localStorage.setItem('userName', googleUser.user.name)
+// 			//@ts-ignore
+// 			localStorage.setItem('avatar', googleUser.user.avatar)
+// 			console.log(googleUser)
+// 		}).catch(() => console.log("Ошибка промиса Layout"))
+// }, [])
+
+module.exports = {signUpRequest, signOutRequest, signInRequest, getProfile, editProfile, editPassword, deleteUser, uploadAvatar, googleLoginSuccess}
