@@ -1,12 +1,15 @@
-import { useState, useEffect, FC } from "react"
+import { useState, useEffect, FC, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import styled from 'styled-components'
 import { Recipe } from "./Recipe"
+import { myContext } from './Context'
 
 export const Dashboard:FC = () => {
     const [recipes, setRecipes] = useState([])
     const redirect = useNavigate()
+
+    const userObject = useContext(myContext);
 
     useEffect(() => {
         const fetchData = async () => {

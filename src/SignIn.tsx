@@ -46,16 +46,16 @@ export const SignIn:FC = () => {
 		}
 	},[dataPost, redirect, signInStatus])
 	
-	const googleAuth = async () => {
+	const googleAuth = () => {
 		const googleLoginUrl = 'http://localhost:3000/user/google'
-		const newWindow = window.open(googleLoginUrl,"_blank","width: 600, height: 700")
-		setTimeout(() => {
-			localStorage.setItem('token',Cookies.get('auth_token') as string)
-			localStorage.setItem('userName', Cookies.get('name') as string)
-			redirect('/')
-			console.log("Vi zashli SignIn Google")
-			newWindow?.close()
-		}, 4000)
+		window.open(googleLoginUrl,"_self")
+		// setTimeout(() => {
+		// 	localStorage.setItem('token',Cookies.get('auth_token') as string)
+		// 	localStorage.setItem('userName', Cookies.get('name') as string)
+		// 	redirect('/')
+		// 	console.log("Vi zashli SignIn Google")
+		// 	newWindow?.close()
+		// }, 4000)
 	}
 
 	const onSubmit = (data: SetStateAction<{}>) => {

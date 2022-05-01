@@ -113,10 +113,8 @@ const uploadAvatar = async (req, res) => {
 const googleLoginSuccess = async (req, res) => {
 	try {
 		if(!req.user) throw new Error(NFError)
-		console.log('success')
-		res.status(200).send({user: req.user, token: req.user.tokens[req.user.tokens.length - 1].token})
+		res.status(200).send(req.user)
 	} catch (e) {
-		console.log('error')
 		res.status(500).send(e.message)
 	}
 }
