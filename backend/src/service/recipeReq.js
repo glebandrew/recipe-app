@@ -13,13 +13,20 @@ const getAllRecipes = async (req, res) => {
 				.skip((page - 1) * limit)
 			return recipes
 		}
+		const recipeCounter = async function (searchParam = {}) {
+			const recipes = await Recipe.find(searchParam)
+			const count = Math.ceil(recipes.length / limit)
+			return count
+		}
 		const {page = 1, limit = 6} = req.query
 		if(!req.query.select) {
 			const recipes = await findRecipes()
-			res.status(200).send({recipes})
+			const count = recipeCounter()
+			res.status(200).send({recipes, count})
 		} else {
 			const recipes = await findRecipes({title: {$regex: new RegExp('^' + req.query.select, 'i')}})
-			res.status(200).send({recipes})
+			const count = recipeCounter({title: {$regex: new RegExp('^' + req.query.select, 'i')}})
+			res.status(200).send({recipes, count})
 		}
 	} catch (e) {
 		res.status(500).send(e.message)
